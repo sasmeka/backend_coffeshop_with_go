@@ -1,12 +1,22 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"log"
+	"sasmeka/coffeeshop/internal/routers"
+	"sasmeka/coffeeshop/pkg"
 
 	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
-	fmt.Println(os.Getenv("PORT"))
+	database, err := pkg.Postgres_Database()
+	if err != nil {
+		log.Fatal(err)
+	}
+	router := routers.Routers(database)
+	server := pkg.Server(router)
+
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatal(err)
+	}
 }
