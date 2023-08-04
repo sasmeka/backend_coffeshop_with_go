@@ -10,6 +10,7 @@ func Routers(db *sqlx.DB) *gin.Engine {
 
 	users(router, db)
 	sizes(router, db)
+	delivery_methods(router, db)
 
 	return router
 }
