@@ -15,9 +15,9 @@ func users(g *gin.Engine, d *sqlx.DB) {
 	repo := repositories.New_Users(d)
 	handler := handlers.New_Users(repo)
 
-	route.GET("/", handler.Get_Data)
-	route.POST("/", handler.Post_Data)
-	route.PUT("/:id", handler.Put_Data)
-	route.DELETE("/:id", handler.Delete_Data)
+	route.GET("/", handler.Get_Data_Users)
+	route.POST("/", handler.Post_Data_User)
+	route.PUT("/:id", handler.Put_Data_User)
+	route.DELETE("/:id", handler.Delete_Data_User)
 
 }

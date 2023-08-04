@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"errors"
-	"fmt"
 	"sasmeka/coffeeshop/internal/models"
 
 	"github.com/jmoiron/sqlx"
@@ -17,13 +16,18 @@ func New_Users(db *sqlx.DB) *Repo_Users {
 }
 
 func (r *Repo_Users) Get_Users(data *models.Users, page int, limit int) ([]models.Users, error) {
-	people := []models.Users{}
-	query := fmt.Sprintf(`SELECT * FROM public.users LIMIT %[1]d OFFSET %[2]d`, limit, page)
-	r.Select(&people, query)
-	if len(people) == 0 {
-		return nil, errors.New("data note found.")
+	users_data := []models.Users{}
+	r.Select(&users_data, `SELECT id_user,displayname, first_name, last_name, gender, phone, email, birth_date, status_verification, "role", image, create_at, update_at FROM public.users LIMIT $1 OFFSET $2`, limit, page)
+	if len(users_data) == 0 {
+		return nil, errors.New("data not found.")
 	}
-	return people, nil
+	return users_data, nil
+}
+
+func (r *Repo_Users) Get_Count_by_Id(id string) int {
+	var count_data int
+	r.Get(&count_data, "SELECT count(*) FROM public.users WHERE id_user=$1", id)
+	return count_data
 }
 
 func (r *Repo_Users) Get_Count_Users() int {
@@ -67,7 +71,7 @@ func (r *Repo_Users) Insert_User(data *models.Users) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return "success add user.", nil
+	return "add user data successful.", nil
 }
 func (r *Repo_Users) Update_User(data *models.Users) (string, error) {
 	query := `UPDATE public.users SET
@@ -95,7 +99,7 @@ func (r *Repo_Users) Update_User(data *models.Users) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return "success update user.", nil
+	return "update user data successful", nil
 }
 func (r *Repo_Users) Delete_User(data *models.Users) (string, error) {
 	query := `DELETE FROM public.users WHERE id_user=:id_user;`
@@ -103,5 +107,5 @@ func (r *Repo_Users) Delete_User(data *models.Users) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return "success delete user.", nil
+	return "delete user data successful", nil
 }

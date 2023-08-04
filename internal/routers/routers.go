@@ -9,6 +9,7 @@ func Routers(db *sqlx.DB) *gin.Engine {
 	router := gin.Default()
 
 	users(router, db)
+	sizes(router, db)
 
 	return router
 }

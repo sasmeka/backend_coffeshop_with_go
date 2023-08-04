@@ -10,17 +10,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Handler_Users struct {
-	*repositories.Repo_Users
+type Handler_Sizes struct {
+	*repositories.Repo_Sizes
 }
 
-func New_Users(r *repositories.Repo_Users) *Handler_Users {
-	return &Handler_Users{r}
+func New_Sizes(r *repositories.Repo_Sizes) *Handler_Sizes {
+	return &Handler_Sizes{r}
 }
 
-func (h *Handler_Users) Get_Data_Users(ctx *gin.Context) {
-	var user models.Users
-	var meta_user models.Meta_Users
+func (h *Handler_Sizes) Get_Data_Sizes(ctx *gin.Context) {
+	var size models.Sizes
+	var meta_size models.Meta_Sizes
 	page := ctx.Query("page")
 	limit := ctx.Query("limit")
 	var offset int = 0
@@ -38,37 +38,37 @@ func (h *Handler_Users) Get_Data_Users(ctx *gin.Context) {
 		offset = 0
 	}
 
-	count_data := h.Get_Count_Users()
+	count_data := h.Get_Count_Data()
 
 	if count_data <= 0 {
-		meta_user.Next = ""
+		meta_size.Next = ""
 	} else {
 		if float64(page_int) == math.Ceil(float64(count_data)/float64(limit_int)) {
-			meta_user.Next = ""
+			meta_size.Next = ""
 		} else {
-			meta_user.Next = strconv.Itoa(page_int + 1)
+			meta_size.Next = strconv.Itoa(page_int + 1)
 		}
 	}
 
 	if page_int == 1 {
-		meta_user.Prev = ""
+		meta_size.Prev = ""
 	} else {
-		meta_user.Prev = strconv.Itoa(page_int - 1)
+		meta_size.Prev = strconv.Itoa(page_int - 1)
 	}
 
 	if int(math.Ceil(float64(count_data)/float64(limit_int))) != 0 {
-		meta_user.Last_page = strconv.Itoa(int(math.Ceil(float64(count_data) / float64(limit_int))))
+		meta_size.Last_page = strconv.Itoa(int(math.Ceil(float64(count_data) / float64(limit_int))))
 	} else {
-		meta_user.Last_page = ""
+		meta_size.Last_page = ""
 	}
 
 	if count_data != 0 {
-		meta_user.Total_data = strconv.Itoa(count_data)
+		meta_size.Total_data = strconv.Itoa(count_data)
 	} else {
-		meta_user.Last_page = ""
+		meta_size.Last_page = ""
 	}
 
-	if err := ctx.ShouldBind(&user); err != nil {
+	if err := ctx.ShouldBind(&size); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"status":      http.StatusBadRequest,
 			"description": "Bad Request",
@@ -77,7 +77,7 @@ func (h *Handler_Users) Get_Data_Users(ctx *gin.Context) {
 		return
 	}
 
-	response, err := h.Get_Users(&user, offset, limit_int)
+	response, err := h.Get_Data(&size, offset, limit_int)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"status":      http.StatusBadRequest,
@@ -91,14 +91,14 @@ func (h *Handler_Users) Get_Data_Users(ctx *gin.Context) {
 		"status":      http.StatusOK,
 		"description": "OK",
 		"data":        response,
-		"meta":        meta_user,
+		"meta":        meta_size,
 	})
 }
 
-func (h *Handler_Users) Post_Data_User(ctx *gin.Context) {
-	var user models.Users
+func (h *Handler_Sizes) Post_Data_Size(ctx *gin.Context) {
+	var size models.Sizes
 
-	if err := ctx.ShouldBind(&user); err != nil {
+	if err := ctx.ShouldBind(&size); err != nil {
 		// ctx.AbortWithError(http.StatusBadRequest, err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"status":      http.StatusBadRequest,
@@ -108,7 +108,7 @@ func (h *Handler_Users) Post_Data_User(ctx *gin.Context) {
 		return
 	}
 
-	response, err := h.Insert_User(&user)
+	response, err := h.Insert_Data(&size)
 	if err != nil {
 		// ctx.AbortWithError(http.StatusBadRequest, err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -124,20 +124,11 @@ func (h *Handler_Users) Post_Data_User(ctx *gin.Context) {
 		"message":     response,
 	})
 }
-func (h *Handler_Users) Put_Data_User(ctx *gin.Context) {
-	var user models.Users
-	user.Id_user = ctx.Param("id")
-	if err := ctx.ShouldBind(&user); err != nil {
-		// ctx.AbortWithError(http.StatusBadRequest, err)
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     err.Error(),
-		})
-		return
-	}
+func (h *Handler_Sizes) Put_Data_Size(ctx *gin.Context) {
+	var size models.Sizes
+	size.Id_size = ctx.Param("id")
 
-	count_by_id := h.Get_Count_by_Id(user.Id_user)
+	count_by_id := h.Get_Count_by_Id(size.Id_size)
 	if count_by_id == 0 {
 		// ctx.AbortWithError(http.StatusBadRequest, err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -148,7 +139,17 @@ func (h *Handler_Users) Put_Data_User(ctx *gin.Context) {
 		return
 	}
 
-	response, err := h.Update_User(&user)
+	if err := ctx.ShouldBind(&size); err != nil {
+		// ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"description": "Bad Request",
+			"message":     err.Error(),
+		})
+		return
+	}
+
+	response, err := h.Update_Data(&size)
 	if err != nil {
 		// ctx.AbortWithError(http.StatusBadRequest, err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -165,20 +166,11 @@ func (h *Handler_Users) Put_Data_User(ctx *gin.Context) {
 	})
 }
 
-func (h *Handler_Users) Delete_Data_User(ctx *gin.Context) {
-	var user models.Users
-	user.Id_user = ctx.Param("id")
-	if err := ctx.ShouldBind(&user); err != nil {
-		// ctx.AbortWithError(http.StatusBadRequest, err)
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     err.Error(),
-		})
-		return
-	}
+func (h *Handler_Sizes) Delete_Data_Size(ctx *gin.Context) {
+	var size models.Sizes
+	size.Id_size = ctx.Param("id")
 
-	count_by_id := h.Get_Count_by_Id(user.Id_user)
+	count_by_id := h.Get_Count_by_Id(size.Id_size)
 	if count_by_id == 0 {
 		// ctx.AbortWithError(http.StatusBadRequest, err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -189,20 +181,29 @@ func (h *Handler_Users) Delete_Data_User(ctx *gin.Context) {
 		return
 	}
 
-	response1, err1 := h.Delete_User(&user)
-	if err1 != nil {
+	if err := ctx.ShouldBind(&size); err != nil {
 		// ctx.AbortWithError(http.StatusBadRequest, err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"status":      http.StatusBadRequest,
 			"description": "Bad Request",
-			"message":     err1.Error(),
+			"message":     err.Error(),
 		})
 		return
 	}
 
+	response, err := h.Delete_Data(&size)
+	if err != nil {
+		// ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"description": "Bad Request",
+			"message":     err.Error(),
+		})
+		return
+	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"status":      http.StatusOK,
 		"description": "OK",
-		"message":     response1,
+		"message":     response,
 	})
 }

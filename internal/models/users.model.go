@@ -10,7 +10,7 @@ type Users struct {
 	Gender              string     `db:"gender" form:"gender"`
 	Phone               string     `db:"phone" form:"phone"`
 	Email               string     `db:"email" form:"email"`
-	Pass                string     `db:"pass" form:"pass"`
+	Pass                string     `db:"pass" form:"pass" json:"pass,omitempty"`
 	Birth_date          string     `db:"birth_date" form:"birth_date"`
 	Status_verification string     `db:"status_verification" form:"status_verification"`
 	Role                string     `db:"role" form:"role"`

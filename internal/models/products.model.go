@@ -12,3 +12,10 @@ type Products struct {
 	Create_at    *time.Time `db:"create_at" form:"create_at"`
 	Update_at    *time.Time `db:"update_at" form:"update_at"`
 }
+
+type Meta_Products struct {
+	Next       string
+	Prev       string
+	Last_page  string
+	Total_data string
+}
