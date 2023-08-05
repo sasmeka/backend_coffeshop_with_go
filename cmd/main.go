@@ -22,3 +22,6 @@ func main() {
 }
 
 // nodemon --watch './**/*.go' --signal SIGTERM --exec 'go' run cmd/main.go
+// go get -u github.com/gin-gonic/gin
+// github.com/jmoiron/sqlx v1.3.5 // indirect
+// github.com/joho/godotenv

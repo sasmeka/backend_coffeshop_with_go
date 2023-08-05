@@ -19,7 +19,7 @@ func (r *Repo_Delivery_Methods) Get_Data(data *models.Delivery_Methods, page int
 	deliver_method_data := []models.Delivery_Methods{}
 	r.Select(&deliver_method_data, `SELECT * FROM public.delivery_methods LIMIT $1 OFFSET $2`, limit, page)
 	if len(deliver_method_data) == 0 {
-		return nil, errors.New("data note found.")
+		return nil, errors.New("data not found.")
 	}
 	return deliver_method_data, nil
 }

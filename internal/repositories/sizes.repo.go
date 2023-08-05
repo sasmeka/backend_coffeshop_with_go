@@ -19,7 +19,7 @@ func (r *Repo_Sizes) Get_Data(data *models.Sizes, page int, limit int) ([]models
 	sizes_data := []models.Sizes{}
 	r.Select(&sizes_data, `SELECT * FROM public.sizes LIMIT $1 OFFSET $2`, limit, page)
 	if len(sizes_data) == 0 {
-		return nil, errors.New("data note found.")
+		return nil, errors.New("data not found.")
 	}
 	return sizes_data, nil
 }
