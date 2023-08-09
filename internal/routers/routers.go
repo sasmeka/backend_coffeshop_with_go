@@ -8,6 +8,7 @@ import (
 func Routers(db *sqlx.DB) *gin.Engine {
 	router := gin.Default()
 
+	auth(router, db)
 	users(router, db)
 	sizes(router, db)
 	delivery_methods(router, db)

@@ -5,8 +5,23 @@ import (
 	"sasmeka/coffeeshop/internal/routers"
 	"sasmeka/coffeeshop/pkg"
 
+	"github.com/asaskevich/govalidator"
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/spf13/viper"
 )
+
+func init() {
+	govalidator.SetFieldsRequiredByDefault(true)
+	viper.SetConfigName("config")
+	viper.SetConfigType("yml")
+	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal(err)
+	}
+
+}
 
 func main() {
 	database, err := pkg.Postgres_Database()

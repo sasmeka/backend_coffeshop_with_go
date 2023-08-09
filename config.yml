@@ -1,0 +1,15 @@
+appName: "coffee shop"
+appEnv: "dev"
+appPort: 8080
+jwt:
+  secrets: "123456"
+database:
+  host: "127.0.0.1"
+  port: 5432
+  user: "fazztrack"
+  name: "coffeeshop_database"
+  pass: "123456"
+# cloudinary:
+#   name: "cd_name_here"
+#   key: "cd_key_here"
+#   sec: "cd_secret_here"

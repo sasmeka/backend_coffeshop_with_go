@@ -3,18 +3,18 @@ package models
 import "time"
 
 type Users struct {
-	Id_user             string     `db:"id_user" form:"id_user"`
-	Displayname         string     `db:"displayname" form:"displayname"`
-	First_name          string     `db:"first_name" form:"first_name"`
-	Last_name           string     `db:"last_name" form:"last_name"`
-	Gender              string     `db:"gender" form:"gender"`
-	Phone               string     `db:"phone" form:"phone"`
-	Email               string     `db:"email" form:"email"`
-	Pass                string     `db:"pass" form:"pass" json:"pass,omitempty"`
-	Birth_date          string     `db:"birth_date" form:"birth_date"`
-	Status_verification string     `db:"status_verification" form:"status_verification"`
-	Role                string     `db:"role" form:"role"`
-	Image               string     `db:"image" form:"image"`
-	Create_at           *time.Time `db:"create_at" form:"create_at"`
-	Update_at           *time.Time `db:"update_at" form:"update_at"`
+	Id_user             string     `db:"id_user" form:"id_user" valid:"-"`
+	Displayname         string     `db:"displayname" form:"displayname" valid:"-"`
+	First_name          string     `db:"first_name" form:"first_name" valid:"-"`
+	Last_name           string     `db:"last_name" form:"last_name" valid:"-"`
+	Gender              string     `db:"gender" form:"gender" valid:"-"`
+	Phone               string     `db:"phone" form:"phone" valid:"-"`
+	Email               string     `db:"email" json:"email" form:"email" valid:"required~e-mail is required"`
+	Pass                string     `db:"pass" json:"pass" form:"pass" valid:"required~password is required,stringlength(6|1024)~password of at least 6 characters"`
+	Birth_date          string     `db:"birth_date" form:"birth_date" valid:"-"`
+	Status_verification string     `db:"status_verification" form:"status_verification" valid:"-"`
+	Role                string     `db:"role" form:"role" valid:"-"`
+	Image               string     `db:"image" form:"image" valid:"-"`
+	Create_at           *time.Time `db:"create_at" form:"create_at" valid:"-"`
+	Update_at           *time.Time `db:"update_at" form:"update_at" valid:"-"`
 }
