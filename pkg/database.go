@@ -13,7 +13,7 @@ func Postgres_Database() (*sqlx.DB, error) {
 	port := viper.GetString("database.port")
 	user := viper.GetString("database.user")
 	password := viper.GetString("database.pass")
-	dbName := viper.GetString("database.name")
+	dbName := viper.GetString("database.namedb")
 
 	config := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable port=%s", host, user, password, dbName, port)
 
