@@ -2,6 +2,7 @@ package routers
 
 import (
 	"sasmeka/coffeeshop/internal/handlers"
+	middleware "sasmeka/coffeeshop/internal/middlewares"
 	"sasmeka/coffeeshop/internal/repositories"
 
 	"github.com/gin-gonic/gin"
@@ -15,9 +16,9 @@ func sizes(g *gin.Engine, d *sqlx.DB) {
 	repo := repositories.New_Sizes(d)
 	handler := handlers.New_Sizes(repo)
 
-	route.GET("/", handler.Get_Data_Sizes)
-	route.POST("/", handler.Post_Data_Size)
-	route.PUT("/:id", handler.Put_Data_Size)
-	route.DELETE("/:id", handler.Delete_Data_Size)
+	route.GET("/", middleware.AuthJwt("admin"), handler.Get_Data_Sizes)
+	route.POST("/", middleware.AuthJwt("admin"), handler.Post_Data_Size)
+	route.PUT("/:id", middleware.AuthJwt("admin"), handler.Put_Data_Size)
+	route.DELETE("/:id", middleware.AuthJwt("admin"), handler.Delete_Data_Size)
 
 }

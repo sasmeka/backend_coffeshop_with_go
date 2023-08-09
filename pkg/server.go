@@ -10,7 +10,7 @@ import (
 
 func Server(router *gin.Engine) *http.Server {
 	var addr string = "0.0.0.0:8080"
-	if port := viper.GetString("port"); port != "" {
+	if port := viper.GetString("appPort"); port != "" {
 		addr = ":" + port
 	}
 

@@ -1,12 +1,16 @@
 package routers
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 )
 
 func Routers(db *sqlx.DB) *gin.Engine {
 	router := gin.Default()
+	router.Use(cors.Default())
+	// router.Use(cors.New(config.CorsConfig))
+	// router.Use(middleware.CORSMiddleware)
 
 	auth(router, db)
 	users(router, db)

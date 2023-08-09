@@ -15,8 +15,8 @@ func New_Auth(db *sqlx.DB) *Repo_Auth {
 	return &Repo_Auth{db}
 }
 
-func (r *Repo_Auth) Get_User(data *models.Auth) (*models.Auth, error) {
-	var result models.Auth
+func (r *Repo_Auth) Get_User(data *models.Users) (*models.Users, error) {
+	var result models.Users
 
 	q := `SELECT id_user, email, "role", "pass" FROM public.users WHERE email = ?`
 
@@ -31,18 +31,18 @@ func (r *Repo_Auth) Get_User(data *models.Auth) (*models.Auth, error) {
 }
 func (r *Repo_Auth) Register_rep(data *models.Users) (string, error) {
 	query := `INSERT INTO public.users(
-			gender, 
-			phone, 
-			email, 
-			pass,
-			image
-		)VALUES(
-			:gender, 
-			:phone, 
-			:email, 
-			:pass,
-			:image
-		);`
+		gender, 
+		phone, 
+		email, 
+		pass,
+		image
+	)VALUES(
+		:gender, 
+		:phone, 
+		:email, 
+		:pass,
+		:image
+	);`
 	if data.Phone == "" || data.Email == "" || data.Pass == "" {
 		return "", errors.New("all forms must be filled")
 	}

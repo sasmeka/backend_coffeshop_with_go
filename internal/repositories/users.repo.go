@@ -58,7 +58,7 @@ func (r *Repo_Users) Get_Users(data *models.Users, page string, limit string) (*
 	if int(math.Ceil(float64(count_data)/float64(limit_int))) != 0 {
 		meta_user.Last_page = strconv.Itoa(int(math.Ceil(float64(count_data) / float64(limit_int))))
 	} else {
-		// meta_user.Last_page = ""
+		meta_user.Last_page = ""
 	}
 
 	if count_data != 0 {
@@ -66,7 +66,6 @@ func (r *Repo_Users) Get_Users(data *models.Users, page string, limit string) (*
 	} else {
 		meta_user.Total_data = ""
 	}
-
 	r.Select(&users_data, `SELECT id_user,displayname, first_name, last_name, gender, phone, email, birth_date, status_verification, "role", image, create_at, update_at FROM public.users LIMIT $1 OFFSET $2`, limit_int, offset)
 	if len(users_data) == 0 {
 		return nil, errors.New("data not found.")

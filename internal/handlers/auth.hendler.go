@@ -19,7 +19,7 @@ func New_Auth(r *repositories.Repo_Auth) *Handler_Auth {
 }
 
 func (h *Handler_Auth) Login(ctx *gin.Context) {
-	var user models.Auth
+	var user models.Users
 	var err_val error
 	if err := ctx.ShouldBind(&user); err != nil {
 		// ctx.AbortWithError(400, err)
@@ -45,7 +45,14 @@ func (h *Handler_Auth) Login(ctx *gin.Context) {
 		return
 	}
 
-	pkg.Responses(200, &config.Result{Data: response}).Send(ctx)
+	jwtt := pkg.NewToken(response.Id_user, response.Role, response.Email)
+	tokens, err := jwtt.Generate()
+	if err != nil {
+		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
+		return
+	}
+
+	pkg.Responses(200, &config.Result{Token: tokens}).Send(ctx)
 }
 
 func (h *Handler_Auth) Register(ctx *gin.Context) {

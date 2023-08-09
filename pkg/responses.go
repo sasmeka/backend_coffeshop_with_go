@@ -12,6 +12,7 @@ type Response struct {
 	Data        interface{} `json:"data,omitempty"`
 	Meta        interface{} `json:"meta,omitempty"`
 	Description interface{} `json:"description,omitempty"`
+	Token       interface{} `json:"token,omitempty"`
 }
 
 func (r *Response) Send(ctx *gin.Context) {
@@ -34,6 +35,9 @@ func Responses(code int, data *config.Result) *Response {
 	}
 	if data.Meta != nil {
 		respone.Meta = data.Meta
+	}
+	if data.Token != nil {
+		respone.Token = data.Token
 	}
 
 	return &respone
