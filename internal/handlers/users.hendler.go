@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"math"
-	"net/http"
+	"sasmeka/coffeeshop/config"
 	"sasmeka/coffeeshop/internal/models"
 	"sasmeka/coffeeshop/internal/repositories"
-	"strconv"
+	"sasmeka/coffeeshop/pkg"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,189 +19,88 @@ func New_Users(r *repositories.Repo_Users) *Handler_Users {
 
 func (h *Handler_Users) Get_Data_Users(ctx *gin.Context) {
 	var user models.Users
-	var meta_user models.Meta_Users
 	page := ctx.Query("page")
 	limit := ctx.Query("limit")
-	var offset int = 0
-	var page_int, _ = strconv.Atoi(page)
-	var limit_int, _ = strconv.Atoi(limit)
-	if limit == "" {
-		limit_int = 5
-	}
-	if page == "" {
-		page_int = 1
-	}
-	if page_int > 0 {
-		offset = (page_int - 1) * limit_int
-	} else {
-		offset = 0
-	}
-
-	count_data := h.Get_Count_Users()
-
-	if count_data <= 0 {
-		meta_user.Next = ""
-	} else {
-		if float64(page_int) == math.Ceil(float64(count_data)/float64(limit_int)) {
-			meta_user.Next = ""
-		} else {
-			meta_user.Next = strconv.Itoa(page_int + 1)
-		}
-	}
-
-	if page_int == 1 {
-		meta_user.Prev = ""
-	} else {
-		meta_user.Prev = strconv.Itoa(page_int - 1)
-	}
-
-	if int(math.Ceil(float64(count_data)/float64(limit_int))) != 0 {
-		meta_user.Last_page = strconv.Itoa(int(math.Ceil(float64(count_data) / float64(limit_int))))
-	} else {
-		meta_user.Last_page = ""
-	}
-
-	if count_data != 0 {
-		meta_user.Total_data = strconv.Itoa(count_data)
-	} else {
-		meta_user.Last_page = ""
-	}
 
 	if err := ctx.ShouldBind(&user); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     err.Error(),
-		})
+		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
 
-	response, err := h.Get_Users(&user, offset, limit_int)
+	response, err := h.Get_Users(&user, page, limit)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     err.Error(),
-		})
+		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"status":      http.StatusOK,
-		"description": "OK",
-		"data":        response,
-		"meta":        meta_user,
-	})
+	pkg.Responses(200, response).Send(ctx)
 }
 
 func (h *Handler_Users) Post_Data_User(ctx *gin.Context) {
 	var user models.Users
 
 	if err := ctx.ShouldBind(&user); err != nil {
-		// ctx.AbortWithError(http.StatusBadRequest, err)
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     err.Error(),
-		})
+		// ctx.AbortWithError(400, err)
+		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
 
 	response, err := h.Insert_User(&user)
 	if err != nil {
-		// ctx.AbortWithError(http.StatusBadRequest, err)
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     err.Error(),
-		})
+		// ctx.AbortWithError(400, err)
+		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"status":      http.StatusOK,
-		"description": "OK",
-		"message":     response,
-	})
+
+	pkg.Responses(200, &config.Result{Message: response}).Send(ctx)
 }
 func (h *Handler_Users) Put_Data_User(ctx *gin.Context) {
 	var user models.Users
 	user.Id_user = ctx.Param("id")
 	if err := ctx.ShouldBind(&user); err != nil {
-		// ctx.AbortWithError(http.StatusBadRequest, err)
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     err.Error(),
-		})
+		// ctx.AbortWithError(400, err)
+		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
 
 	count_by_id := h.Get_Count_by_Id(user.Id_user)
 	if count_by_id == 0 {
-		// ctx.AbortWithError(http.StatusBadRequest, err)
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     "data not found.",
-		})
+		// ctx.AbortWithError(400, err)
+		pkg.Responses(400, &config.Result{Message: "data not found."}).Send(ctx)
+
 		return
 	}
 
 	response, err := h.Update_User(&user)
 	if err != nil {
-		// ctx.AbortWithError(http.StatusBadRequest, err)
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     err.Error(),
-		})
+		// ctx.AbortWithError(400, err)
+		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"status":      http.StatusOK,
-		"description": "OK",
-		"message":     response,
-	})
+	pkg.Responses(200, &config.Result{Message: response}).Send(ctx)
 }
 
 func (h *Handler_Users) Delete_Data_User(ctx *gin.Context) {
 	var user models.Users
 	user.Id_user = ctx.Param("id")
 	if err := ctx.ShouldBind(&user); err != nil {
-		// ctx.AbortWithError(http.StatusBadRequest, err)
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     err.Error(),
-		})
+		// ctx.AbortWithError(400, err)
+		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
 
 	count_by_id := h.Get_Count_by_Id(user.Id_user)
 	if count_by_id == 0 {
-		// ctx.AbortWithError(http.StatusBadRequest, err)
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     "data not found.",
-		})
+		// ctx.AbortWithError(400, err)
+		pkg.Responses(400, &config.Result{Message: "data not found."}).Send(ctx)
 		return
 	}
 
 	response1, err1 := h.Delete_User(&user)
 	if err1 != nil {
-		// ctx.AbortWithError(http.StatusBadRequest, err)
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"description": "Bad Request",
-			"message":     err1.Error(),
-		})
+		// ctx.AbortWithError(400, err)
+		pkg.Responses(400, &config.Result{Message: err1.Error()}).Send(ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"status":      http.StatusOK,
-		"description": "OK",
-		"message":     response1,
-	})
+	pkg.Responses(200, &config.Result{Message: response1}).Send(ctx)
 }

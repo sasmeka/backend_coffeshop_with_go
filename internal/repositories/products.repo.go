@@ -4,7 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math"
+	"sasmeka/coffeeshop/config"
 	"sasmeka/coffeeshop/internal/models"
+	"strconv"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -17,9 +20,55 @@ func New_Products(db *sqlx.DB) *Repo_Products {
 	return &Repo_Products{db}
 }
 
-func (r *Repo_Products) Get_Data(data *models.Products, page int, limit int, search string, orderby string) ([]models.Products, error) {
+func (r *Repo_Products) Get_Data(data *models.Products, page string, limit string, search string, orderby string) (*config.Result, error) {
 	var list_products_data []models.Products
 	Products_data := models.Products{}
+	var meta_product config.Metas
+	var offset int = 0
+	var page_int, _ = strconv.Atoi(page)
+	var limit_int, _ = strconv.Atoi(limit)
+	if limit == "" {
+		limit_int = 5
+	}
+	if page == "" {
+		page_int = 1
+	}
+	if page_int > 0 {
+		offset = (page_int - 1) * limit_int
+	} else {
+		offset = 0
+	}
+
+	count_data := r.Get_Count_Data(search)
+
+	if count_data <= 0 {
+		meta_product.Next = ""
+	} else {
+		if float64(page_int) == math.Ceil(float64(count_data)/float64(limit_int)) {
+			meta_product.Next = ""
+		} else {
+			meta_product.Next = strconv.Itoa(page_int + 1)
+		}
+	}
+
+	if page_int == 1 {
+		meta_product.Prev = ""
+	} else {
+		meta_product.Prev = strconv.Itoa(page_int - 1)
+	}
+
+	if int(math.Ceil(float64(count_data)/float64(limit_int))) != 0 {
+		meta_product.Last_page = strconv.Itoa(int(math.Ceil(float64(count_data) / float64(limit_int))))
+	} else {
+		meta_product.Last_page = ""
+	}
+
+	if count_data != 0 {
+		meta_product.Total_data = strconv.Itoa(count_data)
+	} else {
+		meta_product.Total_data = ""
+	}
+
 	if search == "" {
 		search = ""
 	} else {
@@ -30,7 +79,7 @@ func (r *Repo_Products) Get_Data(data *models.Products, page int, limit int, sea
 	} else {
 		orderby = fmt.Sprintf(` ORDER BY %s`, orderby)
 	}
-	rows, err := r.Queryx(`select * from products WHERE TRUE `+search+orderby+` LIMIT $1 OFFSET $2`, limit, page)
+	rows, err := r.Queryx(`select * from products WHERE TRUE `+search+orderby+` LIMIT $1 OFFSET $2`, limit_int, offset)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -71,7 +120,7 @@ func (r *Repo_Products) Get_Data(data *models.Products, page int, limit int, sea
 		list_products_data = append(list_products_data, Products_data)
 	}
 	rows.Close()
-	return list_products_data, nil
+	return &config.Result{Data: list_products_data, Meta: meta_product}, nil
 }
 
 func (r *Repo_Products) Get_Count_by_Id(id string) int {

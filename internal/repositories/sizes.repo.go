@@ -2,7 +2,10 @@ package repositories
 
 import (
 	"errors"
+	"math"
+	"sasmeka/coffeeshop/config"
 	"sasmeka/coffeeshop/internal/models"
+	"strconv"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -15,13 +18,60 @@ func New_Sizes(db *sqlx.DB) *Repo_Sizes {
 	return &Repo_Sizes{db}
 }
 
-func (r *Repo_Sizes) Get_Data(data *models.Sizes, page int, limit int) ([]models.Sizes, error) {
+func (r *Repo_Sizes) Get_Data(data *models.Sizes, page string, limit string) (*config.Result, error) {
 	sizes_data := []models.Sizes{}
-	r.Select(&sizes_data, `SELECT * FROM public.sizes LIMIT $1 OFFSET $2`, limit, page)
+	var meta_size config.Metas
+
+	var offset int = 0
+	var page_int, _ = strconv.Atoi(page)
+	var limit_int, _ = strconv.Atoi(limit)
+	if limit == "" {
+		limit_int = 5
+	}
+	if page == "" {
+		page_int = 1
+	}
+	if page_int > 0 {
+		offset = (page_int - 1) * limit_int
+	} else {
+		offset = 0
+	}
+
+	count_data := r.Get_Count_Data()
+
+	if count_data <= 0 {
+		meta_size.Next = ""
+	} else {
+		if float64(page_int) == math.Ceil(float64(count_data)/float64(limit_int)) {
+			meta_size.Next = ""
+		} else {
+			meta_size.Next = strconv.Itoa(page_int + 1)
+		}
+	}
+
+	if page_int == 1 {
+		meta_size.Prev = ""
+	} else {
+		meta_size.Prev = strconv.Itoa(page_int - 1)
+	}
+
+	if int(math.Ceil(float64(count_data)/float64(limit_int))) != 0 {
+		meta_size.Last_page = strconv.Itoa(int(math.Ceil(float64(count_data) / float64(limit_int))))
+	} else {
+		meta_size.Last_page = ""
+	}
+
+	if count_data != 0 {
+		meta_size.Total_data = strconv.Itoa(count_data)
+	} else {
+		meta_size.Total_data = ""
+	}
+
+	r.Select(&sizes_data, `SELECT * FROM public.sizes LIMIT $1 OFFSET $2`, limit_int, offset)
 	if len(sizes_data) == 0 {
 		return nil, errors.New("data not found.")
 	}
-	return sizes_data, nil
+	return &config.Result{Data: sizes_data, Meta: meta_size}, nil
 }
 
 func (r *Repo_Sizes) Get_Count_by_Id(id string) int {

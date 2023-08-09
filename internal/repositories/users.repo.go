@@ -2,7 +2,10 @@ package repositories
 
 import (
 	"errors"
+	"math"
+	"sasmeka/coffeeshop/config"
 	"sasmeka/coffeeshop/internal/models"
+	"strconv"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -15,13 +18,60 @@ func New_Users(db *sqlx.DB) *Repo_Users {
 	return &Repo_Users{db}
 }
 
-func (r *Repo_Users) Get_Users(data *models.Users, page int, limit int) ([]models.Users, error) {
+func (r *Repo_Users) Get_Users(data *models.Users, page string, limit string) (*config.Result, error) {
 	users_data := []models.Users{}
-	r.Select(&users_data, `SELECT id_user,displayname, first_name, last_name, gender, phone, email, birth_date, status_verification, "role", image, create_at, update_at FROM public.users LIMIT $1 OFFSET $2`, limit, page)
+
+	var meta_user config.Metas
+	var offset int = 0
+	var page_int, _ = strconv.Atoi(page)
+	var limit_int, _ = strconv.Atoi(limit)
+	if limit == "" {
+		limit_int = 5
+	}
+	if page == "" {
+		page_int = 1
+	}
+	if page_int > 0 {
+		offset = (page_int - 1) * limit_int
+	} else {
+		offset = 0
+	}
+
+	count_data := r.Get_Count_Users()
+
+	if count_data <= 0 {
+		meta_user.Next = ""
+	} else {
+		if float64(page_int) == math.Ceil(float64(count_data)/float64(limit_int)) {
+			meta_user.Next = ""
+		} else {
+			meta_user.Next = strconv.Itoa(page_int + 1)
+		}
+	}
+
+	if page_int == 1 {
+		meta_user.Prev = ""
+	} else {
+		meta_user.Prev = strconv.Itoa(page_int - 1)
+	}
+
+	if int(math.Ceil(float64(count_data)/float64(limit_int))) != 0 {
+		meta_user.Last_page = strconv.Itoa(int(math.Ceil(float64(count_data) / float64(limit_int))))
+	} else {
+		// meta_user.Last_page = ""
+	}
+
+	if count_data != 0 {
+		meta_user.Total_data = strconv.Itoa(count_data)
+	} else {
+		meta_user.Total_data = ""
+	}
+
+	r.Select(&users_data, `SELECT id_user,displayname, first_name, last_name, gender, phone, email, birth_date, status_verification, "role", image, create_at, update_at FROM public.users LIMIT $1 OFFSET $2`, limit_int, offset)
 	if len(users_data) == 0 {
 		return nil, errors.New("data not found.")
 	}
-	return users_data, nil
+	return &config.Result{Data: users_data, Meta: meta_user}, nil
 }
 
 func (r *Repo_Users) Get_Count_by_Id(id string) int {

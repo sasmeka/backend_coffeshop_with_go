@@ -50,10 +50,3 @@ type Products_Delivery_Methods struct {
 	Id_product                 string `json:"id_product" db:"id_product"`
 	Id_dm                      string `json:"id_dm" db:"id_dm"`
 }
-
-type Meta_Products struct {
-	Next       string
-	Prev       string
-	Last_page  string
-	Total_data string
-}
