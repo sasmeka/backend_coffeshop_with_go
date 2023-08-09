@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -15,13 +17,15 @@ type claims struct {
 }
 
 func NewToken(uid, role, email string) *claims {
+	minutes, _ := strconv.Atoi(viper.GetString("jwt.expireminutes"))
+	fmt.Println(minutes)
 	return &claims{
 		Id:    uid,
 		Role:  role,
 		Email: email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "backend coffee shop",
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 2)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * time.Duration(minutes))),
 		},
 	}
 }
@@ -43,6 +47,7 @@ func VerifyToken(token string) (*claims, error) {
 	}
 
 	claimData := data.Claims.(*claims)
+	fmt.Println(claimData)
 	return claimData, nil
 
 }

@@ -3,6 +3,7 @@ appEnv: "dev"
 appPort: 8080
 jwt:
   secrets: "123456"
+  expireminutes: 20
 database:
   host: "127.0.0.1"
   port: 5432
