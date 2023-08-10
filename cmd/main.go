@@ -40,3 +40,8 @@ func main() {
 // go get -u github.com/gin-gonic/gin
 // github.com/jmoiron/sqlx v1.3.5 // indirect
 // github.com/joho/godotenv
+
+// migrate database
+
+// migrate -path ./migrations -database "postgresql://fazztrack:123456@localhost/coffeeshop_database?sslmode=disable&search_path=public" -verbose up
+// migrate -path ./migrations -database "postgresql://fazztrack:123456@localhost/coffeeshop_database?sslmode=disable&search_path=public" -verbose down

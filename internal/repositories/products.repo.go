@@ -120,6 +120,9 @@ func (r *Repo_Products) Get_Data(data *models.Products, page string, limit strin
 		list_products_data = append(list_products_data, Products_data)
 	}
 	rows.Close()
+	if len(list_products_data) == 0 {
+		return nil, errors.New("data not found.")
+	}
 	return &config.Result{Data: list_products_data, Meta: meta_product}, nil
 }
 
@@ -152,7 +155,7 @@ func (r *Repo_Products) Insert_Data(data *models.Productsset) (string, error) {
 	}
 	tx := r.MustBegin()
 	var new_id string
-	tx.Get(&new_id, "select uuid_generate_v4()")
+	tx.Get(&new_id, "select gen_random_uuid()")
 	data.Id_product = new_id
 	tx.NamedExec(`INSERT INTO public.products (id_product,name_product, description, image, favorite) VALUES(:id_product,:name_product, :description, :image, :favorite);`, data)
 	for i := range data.Product_size {

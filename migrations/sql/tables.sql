@@ -1,10 +1,10 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE public.users (
-	id_user uuid primary key NULL DEFAULT uuid_generate_v4(),
-  	displayname varchar(255) NOT NULL,
-	first_name text NOT NULL,
-	last_name text NOT NULL,
+	id_user uuid primary key NULL DEFAULT gen_random_uuid(),
+  	displayname varchar(255),
+	first_name text,
+	last_name text,
     gender varchar(255) NOT NULL DEFAULT 'male'::character varying,
 	phone varchar(15) NULL,
 	email text NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE public.users (
 );
 
 CREATE TABLE public.products (
-	id_product uuid primary key NULL DEFAULT uuid_generate_v4(),
+	id_product uuid primary key NULL DEFAULT gen_random_uuid(),
 	name_product varchar(255) NOT NULL,
 	description text,
 	favorite varchar(1) NOT NULL DEFAULT '0',
@@ -28,7 +28,7 @@ CREATE TABLE public.products (
 );
 
 CREATE TABLE public.sizes (
-	id_size uuid primary key NULL DEFAULT uuid_generate_v4(),
+	id_size uuid primary key NULL DEFAULT gen_random_uuid(),
     name_size varchar(255) NOT NULL,
     abbreviation varchar(3) not null,
 	create_at timestamp not null DEFAULT CURRENT_TIMESTAMP,
@@ -36,14 +36,14 @@ CREATE TABLE public.sizes (
 );
 
 CREATE TABLE public.delivery_methods (
-	id_dm uuid primary key NULL DEFAULT uuid_generate_v4(),
+	id_dm uuid primary key NULL DEFAULT gen_random_uuid(),
     name_dm varchar(255) NOT NULL,
 	create_at timestamp not null DEFAULT CURRENT_TIMESTAMP,
 	update_at timestamp
 );
 
 CREATE TABLE public.products_sizes (
-	id_product_size uuid primary key NULL DEFAULT uuid_generate_v4(),
+	id_product_size uuid primary key NULL DEFAULT gen_random_uuid(),
     id_product uuid NOT NULL,
     id_size uuid not null,
     price int not null,
@@ -55,7 +55,7 @@ CREATE TABLE public.products_sizes (
 	);
 
 CREATE TABLE public.products_delivery_methods (
-	id_product_delivery_method uuid primary key NULL DEFAULT uuid_generate_v4(),
+	id_product_delivery_method uuid primary key NULL DEFAULT gen_random_uuid(),
     id_product uuid NOT NULL,
     id_dm uuid not null,
 	create_at timestamp not null DEFAULT CURRENT_TIMESTAMP,
@@ -65,7 +65,7 @@ CREATE TABLE public.products_delivery_methods (
 	);
 
 -- CREATE TABLE public.favorites_products (
--- 	id_favorite uuid primary key NULL DEFAULT uuid_generate_v4(),
+-- 	id_favorite uuid primary key NULL DEFAULT gen_random_uuid(),
 --     id_product uuid NOT NULL,
 --     id_user uuid NOT NULL,
 -- 	create_at timestamp not null DEFAULT CURRENT_TIMESTAMP,
