@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -18,7 +17,6 @@ type claims struct {
 
 func NewToken(uid, role, email string) *claims {
 	minutes, _ := strconv.Atoi(viper.GetString("jwt.expireminutes"))
-	fmt.Println(minutes)
 	return &claims{
 		Id:    uid,
 		Role:  role,
@@ -47,7 +45,6 @@ func VerifyToken(token string) (*claims, error) {
 	}
 
 	claimData := data.Claims.(*claims)
-	fmt.Println(claimData)
 	return claimData, nil
 
 }

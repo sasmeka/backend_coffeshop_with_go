@@ -10,7 +10,7 @@ database:
   user: "fazztrack"
   namedb: "coffeeshop_database"
   pass: "123456"
-# cloudinary:
-#   name: "cd_name_here"
-#   key: "cd_key_here"
-#   sec: "cd_secret_here"
+cloudinary:
+  name: "dgshxa0xm"
+  key: "665975824159148"
+  sec: "LDKbdogsUhYGLjZDqTwzVD6jGLM"

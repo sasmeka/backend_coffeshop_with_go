@@ -144,9 +144,6 @@ func (r *Repo_Products) Get_Count_Data(search string) int {
 }
 
 func (r *Repo_Products) Insert_Data(data *models.Productsset) (string, error) {
-	if data.Name_product == "" || data.Description == "" {
-		return "", errors.New("field product name & description must be filled.")
-	}
 	if data.Image == "" {
 		data.Image = "/static/product/Default_Product.png"
 	}
@@ -169,9 +166,6 @@ func (r *Repo_Products) Insert_Data(data *models.Productsset) (string, error) {
 	return "add product data successful", nil
 }
 func (r *Repo_Products) Update_Data(data *models.Productsset) (string, error) {
-	if data.Name_product == "" || data.Description == "" {
-		return "", errors.New("field product name & description must be filled.")
-	}
 	if data.Image == "" {
 		data.Image = "/static/product/Default_Product.png"
 	}

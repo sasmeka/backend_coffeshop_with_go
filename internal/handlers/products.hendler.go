@@ -6,6 +6,7 @@ import (
 	"sasmeka/coffeeshop/internal/repositories"
 	"sasmeka/coffeeshop/pkg"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,9 +43,18 @@ func (h *Handler_Product) Get_Data_Products(ctx *gin.Context) {
 func (h *Handler_Product) Post_Data_Product(ctx *gin.Context) {
 	var productset models.Productsset
 
-	if err := ctx.ShouldBind(&productset); err != nil {
+	if err := ctx.Bind(&productset); err != nil {
 		// ctx.AbortWithError(http.StatusBadRequest, err)
 		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
+		return
+	}
+
+	productset.Image = ctx.MustGet("image").(string)
+
+	var err_val error
+	_, err_val = govalidator.ValidateStruct(&productset)
+	if err_val != nil {
+		pkg.Responses(400, &config.Result{Message: err_val.Error()}).Send(ctx)
 		return
 	}
 
@@ -68,9 +78,18 @@ func (h *Handler_Product) Put_Data_Product(ctx *gin.Context) {
 		return
 	}
 
+	product.Image = ctx.MustGet("image").(string)
+
 	if err := ctx.ShouldBind(&product); err != nil {
 		// ctx.AbortWithError(http.StatusBadRequest, err)
 		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
+		return
+	}
+
+	var err_val error
+	_, err_val = govalidator.ValidateStruct(&product)
+	if err_val != nil {
+		pkg.Responses(400, &config.Result{Message: err_val.Error()}).Send(ctx)
 		return
 	}
 

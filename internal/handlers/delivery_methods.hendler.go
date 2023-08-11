@@ -6,6 +6,7 @@ import (
 	"sasmeka/coffeeshop/internal/repositories"
 	"sasmeka/coffeeshop/pkg"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,6 +45,12 @@ func (h *Handler_Delivery_Methods) Post_Data_Delivery_Method(ctx *gin.Context) {
 		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
+	var err_val error
+	_, err_val = govalidator.ValidateStruct(&deliver_method)
+	if err_val != nil {
+		pkg.Responses(400, &config.Result{Message: err_val.Error()}).Send(ctx)
+		return
+	}
 
 	response, err := h.Insert_Data(&deliver_method)
 	if err != nil {
@@ -67,6 +74,13 @@ func (h *Handler_Delivery_Methods) Put_Data_Delivery_Method(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&deliver_method); err != nil {
 		// ctx.AbortWithError(http.StatusBadRequest, err)
 		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
+		return
+	}
+
+	var err_val error
+	_, err_val = govalidator.ValidateStruct(&deliver_method)
+	if err_val != nil {
+		pkg.Responses(400, &config.Result{Message: err_val.Error()}).Send(ctx)
 		return
 	}
 

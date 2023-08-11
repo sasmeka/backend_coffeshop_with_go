@@ -15,6 +15,12 @@ func New_Auth(db *sqlx.DB) *Repo_Auth {
 	return &Repo_Auth{db}
 }
 
+func (r *Repo_Auth) Get_Count_by_Email(email string) int {
+	var count_data int
+	r.Get(&count_data, "SELECT count(*) FROM public.users WHERE LOWER(email)=LOWER($1)", email)
+	return count_data
+}
+
 func (r *Repo_Auth) Get_User(data *models.Users) (*models.Users, error) {
 	var result models.Users
 

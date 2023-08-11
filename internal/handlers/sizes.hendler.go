@@ -6,6 +6,7 @@ import (
 	"sasmeka/coffeeshop/internal/repositories"
 	"sasmeka/coffeeshop/pkg"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,7 +46,12 @@ func (h *Handler_Sizes) Post_Data_Size(ctx *gin.Context) {
 		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
-
+	var err_val error
+	_, err_val = govalidator.ValidateStruct(&size)
+	if err_val != nil {
+		pkg.Responses(400, &config.Result{Message: err_val.Error()}).Send(ctx)
+		return
+	}
 	response, err := h.Insert_Data(&size)
 	if err != nil {
 		// ctx.AbortWithError(http.StatusBadRequest, err)
@@ -70,7 +76,12 @@ func (h *Handler_Sizes) Put_Data_Size(ctx *gin.Context) {
 		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
-
+	var err_val error
+	_, err_val = govalidator.ValidateStruct(&size)
+	if err_val != nil {
+		pkg.Responses(400, &config.Result{Message: err_val.Error()}).Send(ctx)
+		return
+	}
 	response, err := h.Update_Data(&size)
 	if err != nil {
 		// ctx.AbortWithError(http.StatusBadRequest, err)

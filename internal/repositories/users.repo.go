@@ -79,6 +79,12 @@ func (r *Repo_Users) Get_Count_by_Id(id string) int {
 	return count_data
 }
 
+func (r *Repo_Users) Get_Count_by_Email(email string) int {
+	var count_data int
+	r.Get(&count_data, "SELECT count(*) FROM public.users WHERE LOWER(email)=LOWER($1)", email)
+	return count_data
+}
+
 func (r *Repo_Users) Get_Count_Users() int {
 	var id int
 	r.Get(&id, "SELECT count(*) FROM public.users")
@@ -107,7 +113,7 @@ func (r *Repo_Users) Insert_User(data *models.Users) (string, error) {
 			:birth_date,
 			:image
 		);`
-	if data.Displayname == "" || data.First_name == "" || data.Last_name == "" || data.Phone == "" || data.Email == "" || data.Pass == "" || data.Birth_date == "" {
+	if data.Displayname == nil || data.First_name == nil || data.Last_name == nil || data.Phone == "" || data.Email == "" || data.Pass == "" || data.Birth_date == nil {
 		return "", errors.New("all forms must be filled")
 	}
 	if data.Gender == "" {
@@ -135,7 +141,7 @@ func (r *Repo_Users) Update_User(data *models.Users) (string, error) {
 			image=:image,
 			update_at=now()
 			WHERE id_user=:id_user;`
-	if data.Displayname == "" || data.First_name == "" || data.Last_name == "" || data.Phone == "" || data.Email == "" || data.Pass == "" || data.Birth_date == "" {
+	if data.Displayname == nil || data.First_name == nil || data.Last_name == nil || data.Phone == "" || data.Email == "" || data.Pass == "" || data.Birth_date == nil {
 		return "", errors.New("all forms must be filled")
 	}
 	if data.Gender == "" {

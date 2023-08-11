@@ -36,12 +36,15 @@ func main() {
 	}
 }
 
-// nodemon --watch './**/*.go' --signal SIGTERM --exec 'go' run cmd/main.go
-// go get -u github.com/gin-gonic/gin
-// github.com/jmoiron/sqlx v1.3.5 // indirect
+// github.com/gin-gonic/gin
+// github.com/jmoiron/sqlx
 // github.com/joho/godotenv
+// github.com/spf13/viper
+// github.com/asaskevich/govalidator
+// github.com/golang-jwt/jwt/v5
+// github.com/gin-contrib/cors
+// github.com/cloudinary/cloudinary-go/v2
 
 // migrate database
-
 // migrate -path ./migrations -database "postgresql://fazztrack:123456@localhost/coffeeshop_database?sslmode=disable&search_path=public" -verbose up
 // migrate -path ./migrations -database "postgresql://fazztrack:123456@localhost/coffeeshop_database?sslmode=disable&search_path=public" -verbose down

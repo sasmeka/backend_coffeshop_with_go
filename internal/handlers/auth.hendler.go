@@ -70,6 +70,14 @@ func (h *Handler_Auth) Register(ctx *gin.Context) {
 		return
 	}
 
+	count_by_email := h.Get_Count_by_Email(user.Email)
+	if count_by_email > 0 {
+		// ctx.AbortWithError(400, err)
+		pkg.Responses(400, &config.Result{Message: "e-mail already registered."}).Send(ctx)
+
+		return
+	}
+
 	hash_pass, err_has := pkg.HashPassword(user.Pass)
 	if err_has != nil {
 		pkg.Responses(400, &config.Result{Message: err_has.Error()}).Send(ctx)
