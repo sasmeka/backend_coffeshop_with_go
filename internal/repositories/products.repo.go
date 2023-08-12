@@ -79,7 +79,8 @@ func (r *Repo_Products) Get_Data(data *models.Products, page string, limit strin
 	} else {
 		orderby = fmt.Sprintf(` ORDER BY %s`, orderby)
 	}
-	rows, err := r.Queryx(`select * from products WHERE TRUE `+search+orderby+` LIMIT $1 OFFSET $2`, limit_int, offset)
+	q := fmt.Sprintf(`select * from products WHERE TRUE %s %s LIMIT %s OFFSET %s`, search, orderby, limit_int, offset)
+	rows, err := r.Queryx(r.Rebind(q))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -139,7 +140,8 @@ func (r *Repo_Products) Get_Count_Data(search string) int {
 		search = fmt.Sprintf(` AND LOWER(name_product) like LOWER('%s')`, "%"+search+"%")
 	}
 	var id int
-	r.Get(&id, `SELECT count(*) FROM public.products WHERE TRUE `+search)
+	q := fmt.Sprintf(`SELECT count(*) FROM public.products WHERE TRUE %s`, search)
+	r.Get(&id, r.Rebind(q))
 	return id
 }
 
