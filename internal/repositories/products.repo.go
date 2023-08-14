@@ -79,7 +79,7 @@ func (r *Repo_Products) Get_Data(data *models.Products, page string, limit strin
 	} else {
 		orderby = fmt.Sprintf(` ORDER BY %s`, orderby)
 	}
-	q := fmt.Sprintf(`select * from products WHERE TRUE %s %s LIMIT %s OFFSET %s`, search, orderby, limit_int, offset)
+	q := fmt.Sprintf(`select * from products WHERE TRUE %s %s LIMIT %d OFFSET %d`, search, orderby, limit_int, offset)
 	rows, err := r.Queryx(r.Rebind(q))
 	if err != nil {
 		log.Fatalln(err)
