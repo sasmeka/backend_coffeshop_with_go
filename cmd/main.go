@@ -46,5 +46,5 @@ func main() {
 // github.com/cloudinary/cloudinary-go/v2
 
 // migrate database
-// migrate -path ./migrations -database "postgresql://fazztrack:123456@localhost/coffeeshop_database?sslmode=disable&search_path=public" -verbose up
-// migrate -path ./migrations -database "postgresql://fazztrack:123456@localhost/coffeeshop_database?sslmode=disable&search_path=public" -verbose down
+// migrate -path ./migrations -database "postgresql://fazztrack:123456@localhost/coffeeshop_database?port=5432&sslmode=disable&search_path=public" -verbose up
+// migrate -path ./migrations -database "postgresql://fazztrack:123456@localhost/coffeeshop_database?port=5432&sslmode=disable&search_path=public" -verbose down

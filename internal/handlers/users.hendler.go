@@ -94,13 +94,13 @@ func (h *Handler_Users) Put_Data_User(ctx *gin.Context) {
 		return
 	}
 
-	count_by_email := h.Get_Count_by_Email(user.Email)
-	if count_by_email > 0 {
-		// ctx.AbortWithError(400, err)
-		pkg.Responses(400, &config.Result{Message: "e-mail already registered."}).Send(ctx)
+	// count_by_email := h.Get_Count_by_Email(user.Email)
+	// if count_by_email > 0 {
+	// 	// ctx.AbortWithError(400, err)
+	// 	pkg.Responses(400, &config.Result{Message: "e-mail already registered."}).Send(ctx)
 
-		return
-	}
+	// 	return
+	// }
 
 	var err_val error
 	_, err_val = govalidator.ValidateStruct(&user)
