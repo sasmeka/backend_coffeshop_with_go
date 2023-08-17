@@ -19,6 +19,6 @@ EXPOSE 8080
 #run app
 ENTRYPOINT [ "/coffee_back/coffeeback" ]
 
-# docker build -t coffeeback .
+# docker build -t sasmeka/coffeeback .
 
 
