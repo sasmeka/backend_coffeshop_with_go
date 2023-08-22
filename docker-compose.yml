@@ -7,7 +7,9 @@ services:
       - './postgres-data:/var/lib/postgresql/data'
     ports:
       - '5433:5432'
-    network_mode: bridge
+    networks:
+      - local_default
+    # network_mode: bridge
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=fazztrack
@@ -25,23 +27,25 @@ services:
       - '8081:8080'
     expose:
       - 8080
-    # networks:
-    #   - local
-    network_mode: bridge
+    networks:
+      - local_default
+    # network_mode: bridge
     environment:
-      - PGHOST=host.docker.internal
-      - PGPORT=5433
+      # - PGHOST=host.docker.internal
+      # - PGPORT=5433
+      - PGHOST=mypostgres
+      - PGPORT=5432
       - PGUSER=fazztrack
       - PGDATABASE=fazztrack
       - PGPASSWORD=root
     depends_on:
       db:
         condition: service_healthy
-    # networks:
-    #   local:
-    #     name: 'bridge'
-    #     external: true
-
-    # docker run --name coffeebackapp --net=bridge -e PGHOST=host.docker.internal -e PGPORT=5433 -e PGUSER=fazztrack -e PGDATABASE=postgres -e PGPASSWORD=root -p 8081:8080 sasmeka/coffeeback
-    # docker run -d -e POSTGRES_PASSWORD=root -e POSTGRES_USER=fazztrack -p 5433:5432 -v ./postgres-data:/var/lib/postgresql/data --name mypostgres postgres
+networks:
+  local_default:
+    external: true
+    # docker run --name coffeebackapp --net local_default -e PGHOST=mypostgres -e PGPORT=5432 -e PGUSER=fazztrack -e PGDATABASE=postgres -e PGPASSWORD=root -p 8081:8080 sasmeka/coffeeback
+    # docker run -d --net local_default -e POSTGRES_PASSWORD=root -e POSTGRES_USER=fazztrack -p 5433:5432 -v ./postgres-data:/var/lib/postgresql/data --name mypostgres postgres
     # docker compose up/down
+
+
