@@ -10,6 +10,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type Repo_Sizes_IF interface {
+	Get_Data(data *models.Sizes, page string, limit string) (*config.Result, error)
+	Get_Count_by_Id(id string) int
+	Get_Count_Data() int
+	Insert_Data(data *models.Sizes) (string, error)
+	Update_Data(data *models.Sizes) (string, error)
+	Delete_Data(data *models.Sizes) (string, error)
+}
+
 type Repo_Sizes struct {
 	*sqlx.DB
 }

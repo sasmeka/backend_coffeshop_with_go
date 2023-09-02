@@ -10,6 +10,16 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type Repo_Users_IF interface {
+	Get_Users(data *models.Users, page string, limit string) (*config.Result, error)
+	Get_Count_by_Id(id string) int
+	Get_Count_by_Email(email string) int
+	Get_Count_Users() int
+	Insert_User(data *models.Users) (string, error)
+	Update_User(data *models.Users) (string, error)
+	Delete_User(data *models.Users) (string, error)
+}
+
 type Repo_Users struct {
 	*sqlx.DB
 }

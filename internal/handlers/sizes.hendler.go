@@ -11,10 +11,10 @@ import (
 )
 
 type Handler_Sizes struct {
-	*repositories.Repo_Sizes
+	repositories.Repo_Sizes_IF
 }
 
-func New_Sizes(r *repositories.Repo_Sizes) *Handler_Sizes {
+func New_Sizes(r repositories.Repo_Sizes_IF) *Handler_Sizes {
 	return &Handler_Sizes{r}
 }
 

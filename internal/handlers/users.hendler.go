@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"sasmeka/coffeeshop/config"
 	"sasmeka/coffeeshop/internal/models"
 	"sasmeka/coffeeshop/internal/repositories"
@@ -11,10 +12,10 @@ import (
 )
 
 type Handler_Users struct {
-	*repositories.Repo_Users
+	repositories.Repo_Users_IF
 }
 
-func New_Users(r *repositories.Repo_Users) *Handler_Users {
+func New_Users(r repositories.Repo_Users_IF) *Handler_Users {
 	return &Handler_Users{r}
 }
 
@@ -43,7 +44,7 @@ func (h *Handler_Users) Post_Data_User(ctx *gin.Context) {
 		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
 		return
 	}
-	user.Image = ctx.MustGet("image").(string)
+	user.Image = ctx.GetString("image")
 
 	var err_val error
 	_, err_val = govalidator.ValidateStruct(&user)
@@ -84,7 +85,7 @@ func (h *Handler_Users) Put_Data_User(ctx *gin.Context) {
 		return
 	}
 
-	user.Image = ctx.MustGet("image").(string)
+	user.Image = ctx.GetString("image")
 
 	count_by_id := h.Get_Count_by_Id(user.Id_user)
 	if count_by_id == 0 {
@@ -128,6 +129,7 @@ func (h *Handler_Users) Put_Data_User(ctx *gin.Context) {
 func (h *Handler_Users) Delete_Data_User(ctx *gin.Context) {
 	var user models.Users
 	user.Id_user = ctx.Param("id")
+	fmt.Println(user.Id_user)
 	if err := ctx.ShouldBind(&user); err != nil {
 		// ctx.AbortWithError(400, err)
 		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
