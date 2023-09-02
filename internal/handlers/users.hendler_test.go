@@ -40,7 +40,7 @@ func TestGet_Data_Users(t *testing.T) {
 	repoUserMock.On("Get_Users", mock.Anything).Return(expect, nil)
 
 	r.GET("/user", handler.Get_Data_Users)
-	req := httptest.NewRequest("GET", "/user", nil)
+	req := httptest.NewRequest("GET", "/user?limit=1&page=1", nil)
 	req.Header.Set("Content-type", "application/json")
 	r.ServeHTTP(w, req)
 

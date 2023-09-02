@@ -23,6 +23,8 @@ func (h *Handler_Users) Get_Data_Users(ctx *gin.Context) {
 	var user models.Users
 	page := ctx.Query("page")
 	limit := ctx.Query("limit")
+	fmt.Println("limit = " + limit)
+	fmt.Println("page = " + page)
 
 	if err := ctx.ShouldBind(&user); err != nil {
 		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
