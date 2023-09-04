@@ -76,16 +76,22 @@ func TestPost_Data_User(t *testing.T) {
 	c.Set("image", "")
 
 	handler := New_Users(&repoUserMock)
+	count_id := 0
+	repoUserMock.On("Get_Count_by_Email", mock.Anything).Return(count_id)
 	repoUserMock.On("Insert_User", mock.Anything).Return("add user data successful.", nil)
-	repoUserMock.On("Get_Count_by_Email", mock.Anything).Return(0)
 
 	r.POST("/create_user", handler.Post_Data_User)
 	req := httptest.NewRequest("POST", "/create_user", strings.NewReader(reqBody))
 	req.Header.Set("Content-type", "application/json")
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.JSONEq(t, `{"code":200, "description": "add user data successful.", "status":"OK"}`, w.Body.String())
+	if count_id == 0 {
+		assert.Equal(t, 400, w.Code)
+		assert.JSONEq(t, `{"code":400, "description": "data not found.", "status":"Bad Request"}`, w.Body.String())
+	} else {
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.JSONEq(t, `{"code":200, "description": "add user data successful.", "status":"OK"}`, w.Body.String())
+	}
 }
 
 func TestPut_Data_User(t *testing.T) {
@@ -95,33 +101,44 @@ func TestPut_Data_User(t *testing.T) {
 	c.Set("image", "image.jpg")
 
 	handler := New_Users(&repoUserMock)
+	count_id := 0
+	repoUserMock.On("Get_Count_by_Id", mock.Anything).Return(count_id)
 	repoUserMock.On("Update_User", mock.Anything).Return("update user data successful", nil)
-	repoUserMock.On("Get_Count_by_Id", mock.Anything).Return(1)
 
 	r.PUT("/update_user/:id", handler.Put_Data_User)
 	req := httptest.NewRequest("PUT", "/update_user/asdg8awgd8wtd6", strings.NewReader(reqBody))
 	req.Header.Set("Content-type", "application/json")
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.JSONEq(t, `{"code":200, "description": "update user data successful", "status":"OK"}`, w.Body.String())
+	if count_id == 0 {
+		assert.Equal(t, 400, w.Code)
+		assert.JSONEq(t, `{"code":400, "description": "data not found.", "status":"Bad Request"}`, w.Body.String())
+	} else {
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.JSONEq(t, `{"code":200, "description": "update user data successful", "status":"OK"}`, w.Body.String())
+	}
 }
 
 func TestDelete_Data_User(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
-	c, r := gin.CreateTestContext(w)
-	c.Set("image", "image.jpg")
+	_, r := gin.CreateTestContext(w)
 
 	handler := New_Users(&repoUserMock)
+	count_id := 0
+	repoUserMock.On("Get_Count_by_Id", mock.Anything).Return(count_id)
 	repoUserMock.On("Delete_User", mock.Anything).Return("delete user data successful", nil)
-	repoUserMock.On("Get_Count_by_Id", mock.Anything).Return(1)
 
 	r.DELETE("/delete_user/:id", handler.Delete_Data_User)
 	req := httptest.NewRequest("DELETE", "/delete_user/asdg8awgd8wtd6", strings.NewReader("{}"))
 	req.Header.Set("Content-type", "application/json")
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.JSONEq(t, `{"code":200, "description": "delete user data successful", "status":"OK"}`, w.Body.String())
+	if count_id == 0 {
+		assert.Equal(t, 400, w.Code)
+		assert.JSONEq(t, `{"code":400, "description": "data not found.", "status":"Bad Request"}`, w.Body.String())
+	} else {
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.JSONEq(t, `{"code":200, "description": "delete user data successful", "status":"OK"}`, w.Body.String())
+	}
 }
