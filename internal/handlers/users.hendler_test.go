@@ -76,7 +76,7 @@ func TestPost_Data_User(t *testing.T) {
 	c.Set("image", "")
 
 	handler := New_Users(&repoUserMock)
-	count_id := 0
+	count_id := 1
 	repoUserMock.On("Get_Count_by_Email", mock.Anything).Return(count_id)
 	repoUserMock.On("Insert_User", mock.Anything).Return("add user data successful.", nil)
 
@@ -86,11 +86,11 @@ func TestPost_Data_User(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	if count_id == 0 {
-		assert.Equal(t, 400, w.Code)
-		assert.JSONEq(t, `{"code":400, "description": "data not found.", "status":"Bad Request"}`, w.Body.String())
-	} else {
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.JSONEq(t, `{"code":200, "description": "add user data successful.", "status":"OK"}`, w.Body.String())
+	} else {
+		assert.Equal(t, 400, w.Code)
+		assert.JSONEq(t, `{"code":400, "description": "e-mail already registered.", "status":"Bad Request"}`, w.Body.String())
 	}
 }
 
@@ -101,7 +101,7 @@ func TestPut_Data_User(t *testing.T) {
 	c.Set("image", "image.jpg")
 
 	handler := New_Users(&repoUserMock)
-	count_id := 0
+	count_id := 1
 	repoUserMock.On("Get_Count_by_Id", mock.Anything).Return(count_id)
 	repoUserMock.On("Update_User", mock.Anything).Return("update user data successful", nil)
 
