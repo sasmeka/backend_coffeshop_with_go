@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"sasmeka/coffeeshop/config"
 	"sasmeka/coffeeshop/internal/models"
 
@@ -21,6 +22,7 @@ func (rp *RepoUserMock) Get_Count_by_Id(id string) int {
 }
 func (rp *RepoUserMock) Get_Count_by_Email(email string) int {
 	args := rp.Mock.Called(email)
+	fmt.Println("email")
 	return args.Get(0).(int)
 }
 func (rp *RepoUserMock) Get_Count_Users() int {

@@ -70,28 +70,52 @@ func TestGet_Data_Users(t *testing.T) {
 }
 
 func TestPost_Data_User(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	w := httptest.NewRecorder()
-	c, r := gin.CreateTestContext(w)
-	c.Set("image", "")
+	t.Run("post success", func(t *testing.T) {
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, r := gin.CreateTestContext(w)
+		c.Set("image", "")
 
-	handler := New_Users(&repoUserMock)
-	count_email := 0
-	repoUserMock.On("Insert_User", mock.Anything).Return("add user data successful.", nil)
-	repoUserMock.On("Get_Count_by_Email", mock.Anything).Return(count_email)
+		handler := New_Users(&repoUserMock)
+		repoUserMock.On("Get_Count_by_Email", mock.Anything).Return(0)
+		repoUserMock.On("Insert_User", mock.Anything).Return("add user data successful.", nil)
 
-	r.POST("/create_user", handler.Post_Data_User)
-	req := httptest.NewRequest("POST", "/create_user", strings.NewReader(reqBody))
-	req.Header.Set("Content-type", "application/json")
-	r.ServeHTTP(w, req)
+		r.POST("/create_user", handler.Post_Data_User)
+		req := httptest.NewRequest("POST", "/create_user", strings.NewReader(reqBody))
+		req.Header.Set("Content-type", "application/json")
+		r.ServeHTTP(w, req)
 
-	if w.Code == 200 {
+		// if w.Code == 200 {
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.JSONEq(t, `{"code":200, "description": "add user data successful.", "status":"OK"}`, w.Body.String())
-	} else {
+		// } else {
+		// 	assert.Equal(t, 400, w.Code)
+		// 	assert.JSONEq(t, `{"code":400, "description": "e-mail already registered.", "status":"Bad Request"}`, w.Body.String())
+		// }
+	})
+	t.Run("post fail", func(t *testing.T) {
+		gin.SetMode(gin.TestMode)
+		w := httptest.NewRecorder()
+		c, r := gin.CreateTestContext(w)
+		c.Set("image", "")
+
+		handler := New_Users(&repoUserMock)
+		repoUserMock.On("Get_Count_by_Email", mock.Anything).Return(1)
+		// repoUserMock.On("Insert_User", mock.Anything).Return("add user data successful.", nil)
+
+		r.POST("/create_users", handler.Post_Data_User)
+		req2 := httptest.NewRequest("POST", "/create_users", strings.NewReader(reqBody))
+		req2.Header.Set("Content-type", "application/json")
+		r.ServeHTTP(w, req2)
+
+		// if w.Code == 200 {
+		// 	assert.Equal(t, http.StatusOK, w.Code)
+		// 	assert.JSONEq(t, `{"code":200, "description": "add user data successful.", "status":"OK"}`, w.Body.String())
+		// } else {
 		assert.Equal(t, 400, w.Code)
 		assert.JSONEq(t, `{"code":400, "description": "e-mail already registered.", "status":"Bad Request"}`, w.Body.String())
-	}
+		// }
+	})
 }
 
 func TestPut_Data_User(t *testing.T) {
@@ -101,7 +125,7 @@ func TestPut_Data_User(t *testing.T) {
 	c.Set("image", "image.jpg")
 
 	handler := New_Users(&repoUserMock)
-	count_id_put := 0
+	count_id_put := 1
 	repoUserMock.On("Get_Count_by_Id", mock.Anything).Return(count_id_put)
 	repoUserMock.On("Update_User", mock.Anything).Return("update user data successful", nil)
 
