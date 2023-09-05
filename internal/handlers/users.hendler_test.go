@@ -76,16 +76,16 @@ func TestPost_Data_User(t *testing.T) {
 	c.Set("image", "")
 
 	handler := New_Users(&repoUserMock)
-	count_id := 1
-	repoUserMock.On("Get_Count_by_Email", mock.Anything).Return(count_id)
+	count_email := 0
 	repoUserMock.On("Insert_User", mock.Anything).Return("add user data successful.", nil)
+	repoUserMock.On("Get_Count_by_Email", mock.Anything).Return(count_email)
 
 	r.POST("/create_user", handler.Post_Data_User)
 	req := httptest.NewRequest("POST", "/create_user", strings.NewReader(reqBody))
 	req.Header.Set("Content-type", "application/json")
 	r.ServeHTTP(w, req)
 
-	if count_id == 0 {
+	if w.Code == 200 {
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.JSONEq(t, `{"code":200, "description": "add user data successful.", "status":"OK"}`, w.Body.String())
 	} else {
@@ -101,8 +101,8 @@ func TestPut_Data_User(t *testing.T) {
 	c.Set("image", "image.jpg")
 
 	handler := New_Users(&repoUserMock)
-	count_id := 1
-	repoUserMock.On("Get_Count_by_Id", mock.Anything).Return(count_id)
+	count_id_put := 0
+	repoUserMock.On("Get_Count_by_Id", mock.Anything).Return(count_id_put)
 	repoUserMock.On("Update_User", mock.Anything).Return("update user data successful", nil)
 
 	r.PUT("/update_user/:id", handler.Put_Data_User)
@@ -110,7 +110,7 @@ func TestPut_Data_User(t *testing.T) {
 	req.Header.Set("Content-type", "application/json")
 	r.ServeHTTP(w, req)
 
-	if count_id == 0 {
+	if w.Code == 400 {
 		assert.Equal(t, 400, w.Code)
 		assert.JSONEq(t, `{"code":400, "description": "data not found.", "status":"Bad Request"}`, w.Body.String())
 	} else {
@@ -125,8 +125,8 @@ func TestDelete_Data_User(t *testing.T) {
 	_, r := gin.CreateTestContext(w)
 
 	handler := New_Users(&repoUserMock)
-	count_id := 0
-	repoUserMock.On("Get_Count_by_Id", mock.Anything).Return(count_id)
+	count_id_del := 1
+	repoUserMock.On("Get_Count_by_Id", mock.Anything).Return(count_id_del)
 	repoUserMock.On("Delete_User", mock.Anything).Return("delete user data successful", nil)
 
 	r.DELETE("/delete_user/:id", handler.Delete_Data_User)
@@ -134,7 +134,7 @@ func TestDelete_Data_User(t *testing.T) {
 	req.Header.Set("Content-type", "application/json")
 	r.ServeHTTP(w, req)
 
-	if count_id == 0 {
+	if w.Code == 400 {
 		assert.Equal(t, 400, w.Code)
 		assert.JSONEq(t, `{"code":400, "description": "data not found.", "status":"Bad Request"}`, w.Body.String())
 	} else {

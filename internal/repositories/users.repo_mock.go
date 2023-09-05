@@ -29,13 +29,13 @@ func (rp *RepoUserMock) Get_Count_Users() int {
 }
 func (rp *RepoUserMock) Insert_User(data *models.Users) (string, error) {
 	args := rp.Mock.Called(data)
-	return "add user data successful.", args.Error(1)
+	return args.Get(0).(string), args.Error(1)
 }
 func (rp *RepoUserMock) Update_User(data *models.Users) (string, error) {
 	args := rp.Mock.Called(data)
-	return "update user data successful", args.Error(1)
+	return args.Get(0).(string), args.Error(1)
 }
 func (rp *RepoUserMock) Delete_User(data *models.Users) (string, error) {
 	args := rp.Mock.Called(data)
-	return "delete user data successful", args.Error(1)
+	return args.Get(0).(string), args.Error(1)
 }
