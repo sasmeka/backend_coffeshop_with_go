@@ -16,6 +16,12 @@ func (rp *RepoUserMock) Get_Users(data *models.Users, page string, limit string)
 	args := rp.Mock.Called(data)
 	return args.Get(0).(*config.Result), args.Error(1)
 }
+
+func (rp *RepoUserMock) Get_Users_byId(data *models.Users) (*config.Result, error) {
+	args := rp.Mock.Called(data)
+	return args.Get(0).(*config.Result), args.Error(1)
+}
+
 func (rp *RepoUserMock) Get_Count_by_Id(id string) int {
 	args := rp.Mock.Called(id)
 	return args.Get(0).(int)

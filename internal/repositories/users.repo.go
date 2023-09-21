@@ -12,6 +12,7 @@ import (
 
 type Repo_Users_IF interface {
 	Get_Users(data *models.Users, page string, limit string) (*config.Result, error)
+	Get_Users_byId(data *models.Users) (*config.Result, error)
 	Get_Count_by_Id(id string) int
 	Get_Count_by_Email(email string) int
 	Get_Count_Users() int
@@ -81,6 +82,15 @@ func (r *Repo_Users) Get_Users(data *models.Users, page string, limit string) (*
 		return nil, errors.New("data not found.")
 	}
 	return &config.Result{Data: users_data, Meta: meta_user}, nil
+}
+
+func (r *Repo_Users) Get_Users_byId(data *models.Users) (*config.Result, error) {
+	users_data := []models.Users{}
+	r.Select(&users_data, `SELECT id_user,displayname, first_name, last_name, gender, phone, email, birth_date, status_verification, "role", image, create_at, update_at FROM public.users WHERE id_user=$1`, data.Id_user)
+	if len(users_data) == 0 {
+		return nil, errors.New("data not found.")
+	}
+	return &config.Result{Data: users_data}, nil
 }
 
 func (r *Repo_Users) Get_Count_by_Id(id string) int {

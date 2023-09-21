@@ -39,6 +39,22 @@ func (h *Handler_Users) Get_Data_Users(ctx *gin.Context) {
 	pkg.Responses(200, response).Send(ctx)
 }
 
+func (h *Handler_Users) Get_Data_Users_byId(ctx *gin.Context) {
+	var user models.Users
+	user.Id_user = ctx.Param("id")
+	if err := ctx.ShouldBind(&user); err != nil {
+		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
+		return
+	}
+
+	response, err := h.Get_Users_byId(&user)
+	if err != nil {
+		pkg.Responses(400, &config.Result{Message: err.Error()}).Send(ctx)
+		return
+	}
+	pkg.Responses(200, response).Send(ctx)
+}
+
 func (h *Handler_Users) Post_Data_User(ctx *gin.Context) {
 	user := models.Users{}
 	if err := ctx.ShouldBind(&user); err != nil {

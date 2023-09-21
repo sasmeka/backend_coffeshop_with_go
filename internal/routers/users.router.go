@@ -16,6 +16,7 @@ func users(g *gin.Engine, d *sqlx.DB) {
 	repo := repositories.New_Users(d)
 	handler := handlers.New_Users(repo)
 
+	route.GET("/byId/:id", handler.Get_Data_Users_byId)
 	route.GET("/", handler.Get_Data_Users)
 	route.POST("/", middleware.AuthJwt("admin"), middleware.UploadFile, handler.Post_Data_User)
 	route.PUT("/:id", middleware.AuthJwt("admin"), middleware.UploadFile, handler.Put_Data_User)
